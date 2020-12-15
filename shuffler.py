@@ -21,23 +21,25 @@ while len(workers) < tasks:
     
 c = collections.Counter(workers)
 
-
+print(list(range(1,3, -1)))
 # ищем халявщиков
 lazy_bois = list(set(fnames) - set(workers))
 # берём халявщиков и менее нагруженных, и отправляем их чекать
-worker_checkers = [x[0] for x in c.most_common()[:-(tasks - len(lazy_bois)):-1]] 
+worker_checkers = [x[0] for x in c.most_common()[:-(tasks - len(lazy_bois) + 1):-1]] 
 checkers_1 = lazy_bois + worker_checkers
 
+random.shuffle(checkers_1)
+
 # пытаемся не отправить уже работавших на проверку
-for slave in worker_checkers:
+for slave in checkers_1:
     c[slave] += 0.5
 
 # ещё раз
-worker_checkers = [x[0] for x in c.most_common()[:-(tasks - len(lazy_bois)):-1]] 
-checkers_2 = lazy_bois + worker_checkers
+checkers_2 = [x[0] for x in c.most_common()[:-tasks - 1:-1]]
 
-# циклический сдвиг, чтобы лентяии по 2 раза не чекали
-checkers_2 = checkers_2[1:] + checkers_2[:1] 
+random.shuffle(checkers_2)
+
+
 
 
 print('workers')
